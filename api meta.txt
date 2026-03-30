@@ -1,0 +1,37 @@
+
+Solicite suporte: https://atendechat.com/suporte
+Contrate nossos servidores: https://atendechat.com/servidores
+2025 @ Todos os direitos reservados a https://atendechat.com
+
+ ✅ API Oficial instalada com sucesso!
+
+╔══════════════════════════════════════════════════════════════╗
+║          API OFICIAL DO WHATSAPP - INFORMAÇÕES               ║
+╠══════════════════════════════════════════════════════════════╣
+║ URL:           https://meta.ia-zap.app.br
+║ Porta:         6000
+║ Banco:         iazap_apioficial
+║ PM2 Process:   iazap-apioficial
+║ Swagger:       https://meta.ia-zap.app.br/swagger
+╠══════════════════════════════════════════════════════════════╣
+║ TOKEN ADMIN:   3b3240fb9d60f9398d046ba45f5c289f6f22170c6f5cc24a53e213414e07008a
+╠══════════════════════════════════════════════════════════════╣
+║ Webhook Meta:
+║ https://meta.ia-zap.app.br/v1/webhook/{companyId}/{conexaoId}
+╚══════════════════════════════════════════════════════════════╝
+
+⚠️  IMPORTANTE: Guarde o TOKEN ADMIN em local seguro!
+   Ele é necessário para autenticação na API.
+
+
+╔════════════════════════════════════════════════════════════════╗
+║              ✅ INSTALAÇÃO CONCLUÍDA COM SUCESSO!              ║
+╚════════════════════════════════════════════════════════════════╝
+
+🎉 Instância: iazap
+🌐 Frontend: https://app.ia-zap.app.br
+🔧 Backend: https://api.ia-zap.app.br
+
+📄 Log completo: /var/log/instalador_atendechat_iazap_20260208_234201.log
+
+root@ia-zap:~/Instalador-AtendechatApioffcial# 

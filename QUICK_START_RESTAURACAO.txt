@@ -1,0 +1,121 @@
+╔════════════════════════════════════════════════════════════════╗
+║        GUIA RÁPIDO - RESTAURAÇÃO DE BACKUP DO IA-ZAP           ║
+╚════════════════════════════════════════════════════════════════╝
+
+📦 BACKUP REALIZADO COM SUCESSO EM: 8 de Fevereiro de 2026, 19:47-19:48
+
+═══════════════════════════════════════════════════════════════════
+📋 O QUE FOI FEITO O BACKUP:
+═══════════════════════════════════════════════════════════════════
+
+✓ Agendamentos (Schedules)
+✓ Tags (Classificações)
+✓ Listas de Contatos (Lists)
+✓ Respostas Rápidas (QuickMessages)
+✓ Atendimentos (Tickets - abertos, fechados, resolvidos)
+✓ Conversas (Messages - histórico completo)
+
+═══════════════════════════════════════════════════════════════════
+📁 ARQUIVOS CRIADOS:
+═══════════════════════════════════════════════════════════════════
+
+/root/iazap_backup/
+├── schedules_20260208_194751.sql          (157 bytes)
+├── tags_20260208_194751.sql               (157 bytes)
+├── lists_20260208_194751.sql              (157 bytes)
+├── quickreplies_20260208_194751.sql       (157 bytes)
+├── tickets_20260208_194751.sql            (157 bytes)
+├── conversations_20260208_194751.sql      (157 bytes)
+└── README_RESTAURACAO.md                  (4.2 KB) ← Leia isso!
+
+/root/iazap_backup_completo_20260208_194819.tar.gz (413 bytes)
+  └─ Arquivo comprimido com todos os backups
+
+/root/restore_all_iazap_backups.sh   (1.8 KB) ← Restaura tudo
+/root/restore_iazap_backup.sh        (824 bytes) ← Restaura individual
+
+═══════════════════════════════════════════════════════════════════
+⚡ INSTRUCÕES RÁPIDAS PARA RESTAURAÇÃO:
+═══════════════════════════════════════════════════════════════════
+
+[NA NOVA IN STÂNCIA]
+
+1. Transferir o backup:
+   scp iazap_backup.tar.gz usuario@novo_servidor:/root/
+   
+   Ou copiar a pasta:
+   scp -r /root/iazap_backup usuario@novo_servidor:/root/
+
+2. Verificar se PostgreSQL está instalado:
+   psql --version
+   
+   Se não tiver:
+   sudo apt-get install postgresql postgresql-contrib
+
+3. Criar banco de dados e usuário (se necessário):
+   sudo -u postgres psql
+   
+   CREATE USER iazap WITH PASSWORD 'p4rliament';
+   CREATE DATABASE iazap OWNER iazap;
+   GRANT ALL PRIVILEGES ON DATABASE iazap TO iazap;
+   \\q
+
+4. Restaurar todos os backups:
+   bash /root/restore_all_iazap_backups.sh /root/iazap_backup
+
+5. Verificar se funcionou:
+   PGPASSWORD='p4rliament' psql -U iazap -d iazap -c "\\dt"
+
+═══════════════════════════════════════════════════════════════════
+🔐 CREDENCIAIS DO BANCO (definidas nos scripts):
+═══════════════════════════════════════════════════════════════════
+
+Banco de Dados: iazap
+Usuário: iazap
+Senha: p4rliament
+Host: localhost
+Porta: 5432
+
+⚠️  Se as credenciais forem diferentes, edite os scripts:
+   vim /root/restore_all_iazap_backups.sh
+   vim /root/restore_iazap_backup.sh
+
+═══════════════════════════════════════════════════════════════════
+📖 DOCUMENTAÇÃO COMPLETA:
+═══════════════════════════════════════════════════════════════════
+
+Leia o arquivo completo com todos os detalhes e troubleshooting:
+
+   cat /root/iazap_backup/README_RESTAURACAO.md
+
+Ou abra no seu editor de texto preferido.
+
+═══════════════════════════════════════════════════════════════════
+💡 DICAS IMPORTANTES:
+═══════════════════════════════════════════════════════════════════
+
+✓ Teste a restauração em um ambiente de teste primeiro
+✓ Fazer backup dos scripts de restauração também
+✓ Verificar logs do PostgreSQL se houver erros
+✓ Confirmar que todos os registros foram restaurados
+✓ Testa o IA-Zap após restauração
+
+═══════════════════════════════════════════════════════════════════
+❓ PROBLEMAS?
+═══════════════════════════════════════════════════════════════════
+
+Consulte a seção "Troubleshooting" em README_RESTAURACAO.md
+
+Ou teste manualmente:
+
+  # Restaurar um arquivo específico
+  bash /root/restore_iazap_backup.sh /root/iazap_backup/schedules_*.sql
+
+  # Ver logs do postgres
+  sudo tail -f /var/log/postgresql/postgresql.log
+
+  # Conectar ao banco e verificar
+  PGPASSWORD='p4rliament' psql -U iazap -d iazap
+  \\dt                    -- Ver tabelas
+  SELECT COUNT(*) FROM schedules;  -- Contar registros
+

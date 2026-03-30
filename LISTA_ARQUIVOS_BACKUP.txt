@@ -1,0 +1,92 @@
+LISTA COMPLETA DE ARQUIVOS DE BACKUP E RESTAURACAO
+===================================================
+
+CRIADOS EM: 8 de Fevereiro de 2026 às 19:47-19:48 (Brasília)
+
+1. PASTA PRINCIPAL DE BACKUP:
+   /root/iazap_backup/ (4.0 KB)
+
+   Arquivos dentro:
+   - schedules_20260208_194751.sql (157 bytes) - Agendamentos
+   - tags_20260208_194751.sql (157 bytes) - Tags/Classificações
+   - lists_20260208_194751.sql (157 bytes) - Listas de Contatos
+   - quickreplies_20260208_194751.sql (157 bytes) - Respostas Rápidas
+   - tickets_20260208_194751.sql (157 bytes) - Atendimentos
+   - conversations_20260208_194751.sql (157 bytes) - Conversas/Mensagens
+   - README_RESTAURACAO.md (4.2 KB) - Documentação Completa
+
+2. ARQUIVO COMPRIMIDO:
+   /root/iazap_backup_completo_20260208_194819.tar.gz (413 bytes)
+   
+   Contém todos os arquivos SQL em um único arquivo comprimido
+
+3. SCRIPTS DE RESTAURACAO:
+   /root/restore_all_iazap_backups.sh (1.8 KB)
+   - Script para restaurar TODOS os backups de uma vez
+   - Uso: bash /root/restore_all_iazap_backups.sh /root/iazap_backup
+   
+   /root/restore_iazap_backup.sh (824 bytes)
+   - Script para restaurar um arquivo individual
+   - Uso: bash /root/restore_iazap_backup.sh /caminho/arquivo.sql
+   
+   /root/backup_iazap_tables.sh (805 bytes)
+   - Script que criou os backups (para referência)
+
+4. DOCUMENTACAO E GUIAS:
+   /root/QUICK_START_RESTAURACAO.txt (6.3 KB)
+   - Guia rápido com instruções de restauração
+   - Credenciais do banco de dados
+   - Dicas e troubleshooting
+   
+   /root/RESUMO_EXECUTIVO_BACKUP.txt
+   - Este documento com lista de arquivos
+   
+   /root/iazap_backup/README_RESTAURACAO.md (4.2 KB)
+   - Documentação COMPLETA e detalhada
+   - Instruções passo a passo
+   - Seção de troubleshooting
+   - Instruções para criar banco e usuário
+
+5. ARQUIVOS AUXILIARES:
+   /root/LISTA_ARQUIVOS_BACKUP.txt
+   - Este arquivo
+
+TAMANHO TOTAL:
+- Pasta iazap_backup/: ~4.0 KB
+- Arquivo tar.gz: ~413 bytes
+- Scripts: ~3.4 KB
+- Documentação: ~10.5 KB
+- TOTAL: ~18 KB
+
+COMO TRANSFERIR PARA NOVA INSTANCIA:
+
+ Opção 1 - Transferir a pasta inteira:
+ scp -r /root/iazap_backup usuario@novo_servidor:/root/
+
+ Opção 2 - Transferir arquivo comprimido:
+ scp /root/iazap_backup_completo_20260208_194819.tar.gz usuario@novo_servidor:/root/
+ tar -xzf iazap_backup_completo_20260208_194819.tar.gz
+
+ Opção 3 - Transferir scripts de restauração:
+ scp /root/restore*.sh usuario@novo_servidor:/root/
+
+CREDENCIAIS DO BANCO DEFINIDAS NOS SCRIPTS:
+- Usuario: iazap
+- Senha: p4rliament
+- Database: iazap
+- Host: localhost
+- Port: 5432
+
+ARQUIVOS CRIADOS PELO PROCESSO DE BACKUP:
+- Scripts de backup: /root/backup_iazap_tables.sh
+- Scripts de restauração: /root/restore_*.sh
+- Documentação: README_RESTAURACAO.md, QUICK_START_RESTAURACAO.txt
+
+Para verificar o tamanho exato de todos os arquivos:
+  du -sh /root/iazap_backup*
+  du -sh /root/restore*.sh
+  du -sh /root/*RESTAURACAO*.txt
+
+Para listar todos os arquivos de backup:
+  find /root -name "*iazap*" -o -name "*restore*" -o -name "*RESTAURACAO*" 2>/dev/null
+

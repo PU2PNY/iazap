@@ -1,0 +1,110 @@
+#!/bin/bash
+
+# Trap para cleanup em caso de interrupção
+cleanup_on_exit() {
+  if [ -f /tmp/atendechat_swap_created ]; then
+    echo ""
+    echo "🧹 Limpando swap temporário..."
+    sudo swapoff /swapfile_atendechat 2>/dev/null
+    sudo rm -f /swapfile_atendechat
+    rm -f /tmp/atendechat_swap_created
+  fi
+}
+
+trap cleanup_on_exit EXIT INT TERM
+
+# reset shell colors
+tput init
+
+# https://stackoverflow.com/questions/59895/how-to-get-the-source-directory-of-a-bash-script-from-within-the-script-itself
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  PROJECT_ROOT="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$PROJECT_ROOT/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+PROJECT_ROOT="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+
+# required imports
+source "${PROJECT_ROOT}"/variables/manifest.sh
+source "${PROJECT_ROOT}"/utils/manifest.sh
+source "${PROJECT_ROOT}"/lib/manifest.sh
+
+# user configs file
+if [[ ! -e "${PROJECT_ROOT}"/config ]]; then
+  cat << EOF > "${PROJECT_ROOT}"/config
+deploy_password=${deploy_password}
+mysql_root_password=${mysql_root_password}
+db_pass=${db_pass}
+EOF
+fi
+
+# this file has passwords
+sudo su - root <<EOF
+chown root:root "${PROJECT_ROOT}"/config
+chmod 700 "${PROJECT_ROOT}"/config
+EOF
+source "${PROJECT_ROOT}"/config
+
+# interactive CLI
+inquiry_options
+
+# Inicializar sistema de log
+init_log
+
+# dependencies related
+system_update
+system_node_install
+system_pm2_install
+system_docker_install
+system_puppeteer_dependencies
+system_snapd_install
+system_nginx_install
+system_certbot_install
+
+# Verificar/Atualizar Node.js para v20+
+system_check_nodejs
+
+# system config
+system_create_user
+
+# backend related
+system_git_clone
+backend_set_env
+backend_redis_create
+backend_node_dependencies
+backend_node_build
+backend_sequelize_config
+backend_db_migrate
+backend_db_seed
+backend_create_default_plan_company
+backend_setup_master_user
+backend_start_pm2
+backend_nginx_setup
+
+# frontend related
+frontend_set_env
+frontend_node_dependencies
+frontend_node_build
+frontend_start_pm2
+frontend_nginx_setup
+
+# API Oficial do WhatsApp (opcional)
+api_oficial_install_all
+
+# network related
+system_nginx_conf
+system_nginx_restart
+system_certbot_setup
+
+# SSL para API Oficial (se instalada)
+api_oficial_certbot
+
+# Cleanup - remover swap temporário se foi criado
+frontend_cleanup_memory
+
+# Mostrar informações da API Oficial (se instalada)
+api_oficial_show_final_info
+
+# Mostrar mensagem de sucesso
+show_success

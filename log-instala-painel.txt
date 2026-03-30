@@ -1,0 +1,3 @@
+2026-01-17 22:58:51 - Landing page (ia-zap.app.br) HTTPS 100% funcional - curl testa OK
+2026-01-17 22:58:51 - HTTP→HTTPS redirect funcionando corretamente
+2026-01-17 22:58:51 - Painel (painel.ia-zap.app.br) HTTPS 100% funcional

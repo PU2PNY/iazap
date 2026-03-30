@@ -1,0 +1,25 @@
+server {
+ server_name ia-zap.app.br www.ia-zap.app.br;
+
+ root /var/www/html;
+ index index.html;
+
+ access_log /var/log/nginx/iazap-landing.access.log;
+ error_log /var/log/nginx/iazap-landing.error.log;
+
+ location / {
+  try_files $uri $uri/ =404;
+ }
+
+ listen 443 ssl;
+ ssl_certificate /etc/letsencrypt/live/ia-zap.app.br/fullchain.pem;
+ ssl_certificate_key /etc/letsencrypt/live/ia-zap.app.br/privkey.pem;
+ include /etc/letsencrypt/options-ssl-nginx.conf;
+ ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+
+server {
+ listen 80;
+ server_name ia-zap.app.br www.ia-zap.app.br;
+ return 301 https://$host$request_uri;
+}
