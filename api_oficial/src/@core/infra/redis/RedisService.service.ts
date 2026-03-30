@@ -1,7 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Redis } from 'ioredis';
 
-@Injectable()
 export class RedisService {
   private client: Redis;
   private logger: Logger = new Logger('RedisServer');
@@ -16,12 +15,8 @@ export class RedisService {
     }
   }
 
-  async set(key: string, value: string, ttlSeconds?: number): Promise<void> {
-    if (ttlSeconds) {
-      await this.client.set(key, value, 'EX', ttlSeconds);
-    } else {
-      await this.client.set(key, value);
-    }
+  async set(key: string, value: string): Promise<void> {
+    await this.client.set(key, value);
   }
 
   async get(key: string): Promise<string | null> {
@@ -34,19 +29,6 @@ export class RedisService {
 
   async keys(pattern: string): Promise<string[]> {
     return await this.client.keys(pattern);
-  }
-
-  async exists(key: string): Promise<boolean> {
-    const result = await this.client.exists(key);
-    return result === 1;
-  }
-
-  async expire(key: string, ttlSeconds: number): Promise<void> {
-    await this.client.expire(key, ttlSeconds);
-  }
-
-  async ttl(key: string): Promise<number> {
-    return await this.client.ttl(key);
   }
 
   async quit(): Promise<void> {

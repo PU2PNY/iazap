@@ -3,12 +3,16 @@ import {
   Get,
   Post,
   Body,
+  Patch,
   Param,
+  Delete,
   Put,
+  Request,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { IRequest } from 'src/@core/global-interfaces/iRequest.interface';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -33,7 +37,7 @@ export class CompaniesController {
   @Get()
   @ApiOperation({ summary: 'Listar Empresas' })
   @ApiResponse({ status: 400, description: 'Erro ao listar empresas' })
-  @ApiResponse({ status: 200, description: 'Mostrar dados das empresas' })
+  @ApiResponse({ status: 200, description: 'Mostrar dados da empresas' })
   async all() {
     return await this.service.all();
   }

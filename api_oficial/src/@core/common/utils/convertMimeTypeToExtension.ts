@@ -53,6 +53,7 @@ export const mimeToExtension: { [key: string]: string } = {
   'audio/3gpp': '3gp',
   'video/3gpp2': '3g2',
   'audio/3gpp2': '3g2',
+
   'application/x-mtx': 'mtx', 
   'application/x-aud': 'aud', 
   'application/x-rul': 'rul', 
@@ -73,7 +74,6 @@ export const mimeToExtension: { [key: string]: string } = {
   'application/x-pkcs12': 'pfx',
   'application/x-msdownload': 'exe',
   'application/x-executable': 'exe',
-  'application/x-ret': 'ret',
 };
 
 export function convertMimeTypeToExtension(mimetype: string) {

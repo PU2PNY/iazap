@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaService } from './@core/infra/database/prisma.service';
@@ -19,10 +18,6 @@ import { TemplatesWhatsappModule } from './resources/v1/templates-whatsapp/templ
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-    }),
     CompaniesModule,
     WebhookModule,
     WhatsappOficialModule,

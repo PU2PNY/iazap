@@ -7,126 +7,92 @@ import {
 } from 'src/@core/interfaces/IWebsocket.interface';
 
 @Injectable()
-export class SocketService implements OnModuleDestroy {
-  private connections: Map<number, Socket> = new Map();
+export class SocketService {
+  private socket: Socket;
   private url: string;
+  id: number;
+
   private logger: Logger = new Logger(`${SocketService.name}`);
 
-  constructor() {
-    this.url = process.env.URL_BACKEND_MULT100;
-    if (!this.url) {
-      this.logger.error('Nenhuma configuração do url do backend');
-    }
-  }
+  constructor() {}
 
-  onModuleDestroy() {
-    this.logger.log('Desconectando todos os sockets...');
-    this.connections.forEach((socket, id) => {
-      this.logger.log(`Desconectando socket da empresa ${id}`);
-      socket.disconnect();
-    });
-    this.connections.clear();
-  }
+  connect(id: number) {
+    try {
+      this.url = process.env.URL_BACKEND_MULT100;
 
-  private async getSocket(id: number): Promise<Socket> {
-    if (this.connections.has(id)) {
-      const existingSocket = this.connections.get(id);
-      if (existingSocket.connected) {
-        return existingSocket;
-      }
-      existingSocket.disconnect();
-      this.connections.delete(id);
-    }
+      if (!this.url) throw new Error('Nenhuma configuração do url do backend');
 
-    if (!this.url) {
-      throw new Error('URL do backend não configurada');
-    }
+      this.id = id;
 
-    const newSocket = io(`${this.url}/${id}`, {
-      query: {
-        token: `Bearer ${process.env.TOKEN_ADMIN || ''}`,
-      },
-      reconnection: true,
-      transports: ['websocket', 'polling'],
-    });
-
-    this.setupSocketEvents(newSocket, id);
-    this.connections.set(id, newSocket);
-
-    return new Promise((resolve, reject) => {
-      newSocket.on('connect', () => {
-        this.logger.log(
-          `Conectado ao websocket do servidor ${this.url}/${id}`,
-        );
-        resolve(newSocket);
+      this.socket = io(`${this.url}/${id}`, {
+        query: {
+          token: `Bearer ${process.env.TOKEN_ADMIN || ''}`,
+        },
       });
 
-      newSocket.on('connect_error', (error) => {
-        this.logger.error(
-          `Erro de conexão para empresa ${id}: ${error.message}`,
-        );
-        this.connections.delete(id);
-        reject(error);
-      });
+      this.setupSocketEvents();
+    } catch (error: any) {
+      this.logger.error(
+        `Erro ao conectar com o websocket da API Mult100 - ${error.message}`,
+      );
+    }
+  }
+
+  sendMessage(data: IReceivedWhatsppOficial) {
+    this.logger.warn(`Conectando ao websocket da empresa ${data.companyId}`);
+
+    this.connect(data.companyId);
+
+    this.logger.warn(
+      `Enviando mensagem para o websocket para a empresa ${data.companyId}`,
+    );
+
+    this.socket.emit('receivedMessageWhatsAppOficial', data);
+
+    setTimeout(() => {
+      this.logger.warn(
+        `Fechando conexão do websocket para a empresa ${data.companyId}`,
+      );
+
+      this.socket.close();
+    }, 1500);
+  }
+
+  readMessage(data: IReceivedWhatsppOficialRead) {
+    this.logger.warn(`Conectando ao websocket da empresa ${data.companyId}`);
+
+    this.connect(data.companyId);
+
+    this.logger.warn(
+      `Enviando mensagem para o websocket para a empresa ${data.companyId}`,
+    );
+
+    this.socket.emit('readMessageWhatsAppOficial', data);
+
+    setTimeout(() => {
+      this.logger.warn(
+        `Fechando conexão do websocket para a empresa ${data.companyId}`,
+      );
+
+      this.socket.close();
+    }, 1500);
+  }
+
+  private setupSocketEvents(): void {
+    this.socket.on('connect', () => {
+      this.logger.log(
+        `Conectado ao websocket do servidor ${this.url}/${this.id}`,
+      );
     });
-  }
 
-  async sendMessage(data: IReceivedWhatsppOficial) {
-    try {
-      this.logger.warn(
-        `Obtendo/conectando ao websocket da empresa ${data.companyId}`,
-      );
-      const socket = await this.getSocket(data.companyId);
-      this.logger.warn(
-        `Enviando mensagem para o websocket para a empresa ${data.companyId}`,
-      );
-      socket.emit('receivedMessageWhatsAppOficial', data);
-    } catch (error: any) {
-      this.logger.error(
-        `Falha ao obter socket ou enviar mensagem: ${error.message}`,
-      );
-    }
-  }
-
-  async readMessage(data: IReceivedWhatsppOficialRead) {
-    try {
-      this.logger.warn(
-        `Obtendo/conectando ao websocket da empresa ${data.companyId}`,
-      );
-      const socket = await this.getSocket(data.companyId);
-      this.logger.warn(
-        `Enviando 'read' para o websocket para a empresa ${data.companyId}`,
-      );
-      socket.emit('readMessageWhatsAppOficial', data);
-    } catch (error: any) {
-      this.logger.error(
-        `Falha ao obter socket ou enviar 'read': ${error.message}`,
-      );
-    }
-  }
-
-  private setupSocketEvents(socket: Socket, id: number): void {
-    socket.on('disconnect', (reason) => {
-      this.logger.error(
-        `Desconectado do websocket (Empresa ${id}). Razão: ${reason}`,
-      );
-      this.connections.delete(id);
+    this.socket.on('connect_error', (error) => {
+      this.logger.error(`Erro de conexão: ${error}`);
     });
-  }
 
-  async emit(event: string, data: any): Promise<void> {
-    try {
-      const companyId = data?.data?.companyId || data?.companyId;
-      if (!companyId) {
-        this.logger.warn('CompanyId não encontrado nos dados');
-        return;
-      }
-
-      this.logger.log(`Emitindo evento ${event} para empresa ${companyId}`);
-      const socket = await this.getSocket(companyId);
-      socket.emit(event, data);
-    } catch (error: any) {
-      this.logger.error(`Falha ao emitir evento ${event}: ${error.message}`);
-    }
+    this.socket.on('disconnect', () => {
+      this.logger.error(
+        `Desconectado do websocket do servidor ${this.url}/${this.id}`,
+      );
+    });
   }
 }

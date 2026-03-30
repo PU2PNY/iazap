@@ -1,216 +1,203 @@
 export interface IWebhookWhatsApp {
   object: string;
-  entry: IEntry[];
+  entry: Array<IWebhookWhatsAppEntry>;
 }
 
-export interface IEntry {
+export interface IWebhookWhatsAppEntry {
   id: string;
-  changes: IChange[];
+  changes: Array<IWebhookWhatsAppEntryChanges>;
 }
 
-export interface IChange {
-  value: IValue;
+export interface IWebhookWhatsAppEntryChanges {
+  value: IWebhookWhatsAppEntryChangesValue;
   field: string;
 }
 
-export interface IValue {
+export interface IWebhookWhatsAppEntryChangesValue {
   messaging_product: string;
-  metadata: IMetadata;
-  contacts?: IContact[];
-  messages?: IMessage[];
-  statuses?: IStatus[];
-  errors?: IError[];
+  metadata?: IWebhookWhatsAppEntryChangesValueMetaData;
+  contacts?: Array<IWebhookWhatsAppEntryChangesValueContacts>;
+  messages?: Array<IWebhookWhatsAppEntryChangesValueMessages>;
+  statuses?: Array<IWebhookWhatsAppEntryChangesValueStatuses>;
 }
 
-export interface IMetadata {
+export interface IWebhookWhatsAppEntryChangesValueStatuses {
+  id: string;
+  status: string;
+  timestamp: string;
+  recipient_id: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMetaData {
   display_phone_number: string;
   phone_number_id: string;
 }
 
-export interface IContact {
-  profile: {
-    name: string;
-  };
+export class IWebhookWhatsAppEntryChangesValueContacts {
+  profile: IWebhookWhatsAppEntryChangesValueContactsProfile;
   wa_id: string;
 }
 
-export interface IMessage {
+export interface IWebhookWhatsAppEntryChangesValueContactsProfile {
+  name: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessages {
   from: string;
   id: string;
   timestamp: string;
-  type: string;
-  text?: ITextMessage;
-  image?: IMediaMessage;
-  audio?: IMediaMessage;
-  video?: IMediaMessage;
-  document?: IDocumentMessage;
-  sticker?: IMediaMessage;
-  location?: ILocationMessage;
-  contacts?: IContactMessage[];
-  interactive?: IInteractiveMessage;
-  button?: IButtonMessage;
-  reaction?: IReactionMessage;
-  context?: IContext;
-  referral?: IReferral;
+  type:
+    | 'text'
+    | 'image'
+    | 'audio'
+    | 'document'
+    | 'video'
+    | 'location'
+    | 'contacts'
+    | 'order'
+    | 'interactive'
+    | 'referral'
+    | 'sticker';
+  text?: IWebhookWhatsAppEntryChangesValueMessagesText;
+  image?: IWebhookWhatsAppEntryChangesValueMessagesImage;
+  audio?: IWebhookWhatsAppEntryChangesValueMessagesAudio;
+  document?: IWebhookWhatsAppEntryChangesValueMessagesDocument;
+  video?: IWebhookWhatsAppEntryChangesValueMessagesVideo;
+  location?: IWebhookWhatsAppEntryChangesValueMessagesLocation;
+  contacts?: IWebhookWhatsAppEntryChangesValueMessagesContacts;
+  context?: IWebhookWhatsAppEntryChangesValueMessagesContext;
+  sticker?: IWebhookWhatsAppEntryChangesValueMessagesSticker;
+  order?: IWebhookWhatsAppEntryChangesValueMessagesOrder;
+  interactive?: IWebhookWhatsAppEntryChangesValueMessagesInteractive;
+  referral?: IWebhookWhatsAppEntryChangesValueMessagesReferral;
 }
 
-export interface ITextMessage {
-  body: string;
-}
-
-export interface IMediaMessage {
-  id: string;
-  mime_type: string;
-  sha256?: string;
-  caption?: string;
-}
-
-export interface IDocumentMessage {
-  id: string;
-  mime_type: string;
-  sha256?: string;
-  caption?: string;
-  filename?: string;
-}
-
-export interface ILocationMessage {
-  latitude: number;
-  longitude: number;
-  name?: string;
-  address?: string;
-}
-
-export interface IContactMessage {
-  addresses?: IContactAddress[];
-  birthday?: string;
-  emails?: IContactEmail[];
-  name: IContactName;
-  org?: IContactOrg;
-  phones?: IContactPhone[];
-  urls?: IContactUrl[];
-}
-
-export interface IContactAddress {
-  city?: string;
-  country?: string;
-  country_code?: string;
-  state?: string;
-  street?: string;
-  type?: string;
-  zip?: string;
-}
-
-export interface IContactEmail {
-  email?: string;
-  type?: string;
-}
-
-export interface IContactName {
-  formatted_name: string;
-  first_name?: string;
-  last_name?: string;
-  middle_name?: string;
-  suffix?: string;
-  prefix?: string;
-}
-
-export interface IContactOrg {
-  company?: string;
-  department?: string;
-  title?: string;
-}
-
-export interface IContactPhone {
-  phone?: string;
-  type?: string;
-  wa_id?: string;
-}
-
-export interface IContactUrl {
-  url?: string;
-  type?: string;
-}
-
-export interface IInteractiveMessage {
-  type: string;
-  button_reply?: {
-    id: string;
-    title: string;
-  };
-  list_reply?: {
-    id: string;
-    title: string;
-    description?: string;
-  };
-  nfm_reply?: {
-    response_json: string;
-    body: string;
-    name: string;
-  };
-}
-
-export interface IButtonMessage {
-  payload: string;
-  text: string;
-}
-
-export interface IReactionMessage {
-  message_id: string;
-  emoji: string;
-}
-
-export interface IContext {
-  from: string;
-  id: string;
-  forwarded?: boolean;
-  frequently_forwarded?: boolean;
-  referred_product?: {
-    catalog_id: string;
-    product_retailer_id: string;
-  };
-}
-
-export interface IReferral {
+export interface IWebhookWhatsAppEntryChangesValueMessagesReferral {
   source_url: string;
   source_type: string;
   source_id: string;
   headline: string;
   body: string;
   media_type: string;
-  image_url?: string;
-  video_url?: string;
-  thumbnail_url?: string;
+  image_url: string;
+  video_url: string;
+  thumbnail_url: string;
+  ctwa_clid: string;
 }
 
-export interface IStatus {
+export interface IWebhookWhatsAppEntryChangesValueMessagesSticker {
+  mime_type: string;
+  sha256: string;
   id: string;
-  status: 'sent' | 'delivered' | 'read' | 'failed';
-  timestamp: string;
-  recipient_id: string;
-  conversation?: IConversation;
-  pricing?: IPricing;
-  errors?: IError[];
+  animated: boolean;
 }
 
-export interface IConversation {
+export interface IWebhookWhatsAppEntryChangesValueMessagesInteractive {
+  type: IWebhookWhatsAppEntryChangesValueMessagesInteractive;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesInteractive {
+  button_reply?: IWebhookWhatsAppEntryChangesValueMessagesInteractiveButtonReply;
+  list_reply?: IWebhookWhatsAppEntryChangesValueMessagesInteractiveListReply;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesInteractiveButtonReply {
   id: string;
-  origin: {
-    type: string;
-  };
-  expiration_timestamp?: string;
-}
-
-export interface IPricing {
-  billable: boolean;
-  pricing_model: string;
-  category: string;
-}
-
-export interface IError {
-  code: number;
   title: string;
-  message?: string;
-  error_data?: {
-    details: string;
-  };
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesInteractiveListReply {
+  id: string;
+  title: string;
+  description: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesOrder {
+  catalog_id: string;
+  text: string;
+  product_items: IWebhookWhatsAppEntryChangesValueMessagesOrderProductItem;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesOrderProductItem {
+  product_retailer_id: string;
+  quantity: string;
+  item_price: string;
+  currency: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesContext {
+  from: string;
+  id: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesText {
+  body: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesImage {
+  mime_type: string;
+  sha256: string;
+  id: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesAudio {
+  mime_type: string;
+  sha256: string;
+  id: string;
+  voice: boolean;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesDocument {
+  filename: string;
+  mime_type: string;
+  sha256: string;
+  id: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesVideo {
+  mime_type: string;
+  sha256: string;
+  id: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesLocation {
+  latitude: number;
+  longitude: number;
+  name: string;
+  url: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesContacts {
+  emails: Array<IWebhookWhatsAppEntryChangesValueMessagesContactsEmails>;
+  name: IWebhookWhatsAppEntryChangesValueMessagesContactsName;
+  org: IWebhookWhatsAppEntryChangesValueMessagesContactsOrg;
+  phones: IWebhookWhatsAppEntryChangesValueMessagesContactsPhones;
+  urls: IWebhookWhatsAppEntryChangesValueMessagesContactsUrls;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesContactsEmails {
+  email: string;
+  type: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesContactsName {
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  formatted_name: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesContactsOrg {
+  company: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesContactsPhones {
+  phone: string;
+  wa_id: string;
+  type: string;
+}
+
+export interface IWebhookWhatsAppEntryChangesValueMessagesContactsUrls {
+  url: string;
+  type: string;
 }

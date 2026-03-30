@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { SendMessageWhatsappService } from './send-message-whatsapp.service';
 import { SendMessageWhatsappController } from './send-message-whatsapp.controller';
-import { PrismaService } from '../../../@core/infra/database/prisma.service';
-import { MetaService } from '../../../@core/infra/meta/meta.service';
-import { RedisService } from '../../../@core/infra/redis/RedisService.service';
+import { PrismaService } from 'src/@core/infra/database/prisma.service';
+import { MetaService } from 'src/@core/infra/meta/meta.service';
+import { WhatsappOficialService } from '../whatsapp-oficial/whatsapp-oficial.service';
+import { RabbitMQService } from 'src/@core/infra/rabbitmq/RabbitMq.service';
 
 @Module({
   controllers: [SendMessageWhatsappController],
@@ -11,8 +12,8 @@ import { RedisService } from '../../../@core/infra/redis/RedisService.service';
     SendMessageWhatsappService,
     PrismaService,
     MetaService,
-    RedisService,
+    WhatsappOficialService,
+    RabbitMQService,
   ],
-  exports: [SendMessageWhatsappService],
 })
 export class SendMessageWhatsappModule {}

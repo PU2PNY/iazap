@@ -55,7 +55,7 @@ export interface IMetaMessage {
 }
 
 export interface IMetaMessageText {
-  preview_url?: boolean;
+  preview_url?: string;
   body: string;
 }
 
@@ -65,7 +65,7 @@ export interface IMetaContext {
 
 export interface IMetaMessageReaction {
   message_id: string;
-  emoji: string;
+  emoji: string; //unicode https://emojipedia.org/red-heart
 }
 
 export interface IMetaMessageAudio {
@@ -73,15 +73,15 @@ export interface IMetaMessageAudio {
 }
 
 export interface IMetaMessageDocument {
-  id?: string;
-  link?: string;
+  id?: string /* Only if using uploaded media (recommended) */;
+  link?: string /* Only if linking to your media (not recommended) */;
   caption?: string;
   filename: string;
 }
 
 export interface IMetaMessageImage {
-  id: string;
-  link: string;
+  id: string /* Only if using uploaded media (recommended) */;
+  link: string /* Only if linking to your media (not recommended) */;
   caption: string;
 }
 
@@ -90,8 +90,8 @@ export interface IMetaMessageSticker {
 }
 
 export interface IMetaMessageVideo {
-  id?: string;
-  link?: string;
+  id?: string /* Only if using uploaded media (recommended) */;
+  link?: string /* Only if linking to your media (not recommended) */;
   caption: string;
 }
 
@@ -104,7 +104,7 @@ export interface IMetaMessageLocation {
 
 export interface IMetaMessageContacts {
   addresses?: IMetaMessageContactsAddresses;
-  birthday?: string;
+  birthday?: string; // AAAA-MM-DD
   emails?: Array<IMetaMessageContactsEmails>;
   name?: IMetaMessageContactsName;
   phones?: Array<IMetaMessageContactsPhones>;
@@ -178,7 +178,7 @@ export interface IMetaMessageinteractiveActionButtonsReply {
 
 export interface IMetaMessageinteractiveActionSections {
   title: string;
-  rows: IMetaMessageinteractiveActionSectionsRows[];
+  rows: IMetaMessageinteractiveActionSectionsRows;
 }
 
 export interface IMetaMessageinteractiveActionSectionsRows {
@@ -220,32 +220,20 @@ export interface IMetaMessageTemplateLanguage {
 }
 
 export interface IMetaMessageTemplateComponents {
-  type: 'header' | 'body' | 'footer' | 'button';
-  sub_type?: 'quick_reply' | 'url';
+  type: 'header' | 'body' | 'header';
+  sub_type?: 'quick_reply';
   index?: string;
-  parameters?: IMetaMessageTemplateComponentsParameters[];
+  parameters: IMetaMessageTemplateComponentsParameters;
 }
 
 export interface IMetaMessageTemplateComponentsParameters {
-  type:
-    | 'text'
-    | 'currency'
-    | 'date_time'
-    | 'location'
-    | 'payload'
-    | 'image'
-    | 'video'
-    | 'document'
-    | 'url';
+  type: 'location' | 'currency' | 'date_time' | 'text' | 'payload' | 'location';
   text?: string;
   location?: IMetaMessageTemplateComponentsParametersLocation;
   currency?: IMetaMessageTemplateComponentsParametersCurrency;
   image?: IMetaMessageTemplateComponentsParametersImage;
-  video?: IMetaMessageTemplateComponentsParametersVideo;
-  document?: IMetaMessageTemplateComponentsParametersDocument;
   date_time?: IMetaMessageTemplateComponentsParametersDateTime;
   payload?: string;
-  url?: string;
 }
 
 export interface IMetaMessageTemplateComponentsParametersLocation {
@@ -254,28 +242,14 @@ export interface IMetaMessageTemplateComponentsParametersLocation {
   name?: string;
   address?: string;
 }
-
 export interface IMetaMessageTemplateComponentsParametersCurrency {
   fallback_value: string;
   code: string;
   amount_1000: number;
 }
-
 export interface IMetaMessageTemplateComponentsParametersImage {
   link: string;
 }
-
-export interface IMetaMessageTemplateComponentsParametersVideo {
-  link?: string;
-  id?: string;
-}
-
-export interface IMetaMessageTemplateComponentsParametersDocument {
-  link?: string;
-  id?: string;
-  filename?: string;
-}
-
 export interface IMetaMessageTemplateComponentsParametersDateTime {
   fallback_value: string;
 }

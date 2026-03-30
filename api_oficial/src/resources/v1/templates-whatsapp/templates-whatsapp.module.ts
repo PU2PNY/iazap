@@ -1,18 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TemplatesWhatsappService } from './templates-whatsapp.service';
 import { TemplatesWhatsappController } from './templates-whatsapp.controller';
-import { PrismaService } from '../../../@core/infra/database/prisma.service';
-import { MetaService } from '../../../@core/infra/meta/meta.service';
-import { RedisService } from '../../../@core/infra/redis/RedisService.service';
+import { MetaService } from 'src/@core/infra/meta/meta.service';
+import { WhatsappOficialService } from '../whatsapp-oficial/whatsapp-oficial.service';
+import { RabbitMQService } from 'src/@core/infra/rabbitmq/RabbitMq.service';
 
 @Module({
   controllers: [TemplatesWhatsappController],
   providers: [
     TemplatesWhatsappService,
-    PrismaService,
+    WhatsappOficialService,
     MetaService,
-    RedisService,
+    RabbitMQService,
   ],
-  exports: [TemplatesWhatsappService],
 })
 export class TemplatesWhatsappModule {}

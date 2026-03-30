@@ -13,8 +13,11 @@ export class CompaniesService {
   async one(id: number) {
     try {
       if (!id) throw new Error('Necessário informar o id');
+
       const company = await this.prisma.company.findUnique({ where: { id } });
+
       if (!company) throw new Error('Empresa não encontrada');
+
       return company;
     } catch (error: any) {
       this.logger.error(`one - ${error.message}`);
@@ -26,7 +29,7 @@ export class CompaniesService {
     try {
       return await this.prisma.company.findMany();
     } catch (error: any) {
-      this.logger.error(`all - ${error.message}`);
+      this.logger.error(`one - ${error.message}`);
       throw new AppError(error.message, HttpStatus.BAD_REQUEST);
     }
   }
@@ -36,8 +39,10 @@ export class CompaniesService {
       const findedCompany = await this.prisma.company.findUnique({
         where: { idEmpresaMult100: dto.idEmpresaMult100 },
       });
+
       if (!!findedCompany)
-        throw new Error('Já existe uma empresa com este id cadastrada');
+        throw new Error(`Já existe uma empresa com este id cadastrada`);
+
       return await this.prisma.company.create({
         data: { name: dto.name, idEmpresaMult100: dto.idEmpresaMult100 },
       });
@@ -50,7 +55,9 @@ export class CompaniesService {
   async update(id: number, dto: UpdateCompanyDto) {
     try {
       const company = await this.prisma.company.findUnique({ where: { id } });
+
       if (!!company) throw new Error('Empresa não encontrada');
+
       return await this.prisma.company.update({
         where: { id },
         data: { name: dto.name },

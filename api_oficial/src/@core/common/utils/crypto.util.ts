@@ -7,6 +7,7 @@ export const hashPasswordTransform = {
   async compare(password: string, hash: string) {
     return await bcrypt.compare(password, hash);
   },
+
   async salt() {
     return bcrypt.genSaltSync();
   },

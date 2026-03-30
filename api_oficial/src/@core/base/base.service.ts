@@ -23,6 +23,7 @@ export class BaseService<T> {
   async create(data: any): Promise<T> {
     try {
       if (!data) throw new Error('Data not found');
+
       return this.prisma[this.entity].create({ data });
     } catch (error: any) {
       this.logger.error(error.message);
@@ -42,6 +43,7 @@ export class BaseService<T> {
   async one(id: number): Promise<T> {
     try {
       if (!id) throw new Error('Is necessary to send the id');
+
       return this.prisma[this.entity].findUnique({ where: { id } });
     } catch (error: any) {
       this.logger.error(error.message);
@@ -71,6 +73,7 @@ export class BaseService<T> {
     try {
       if (!id) throw new Error('Id not found');
       if (JSON.stringify(data) === '{}') throw new Error('Data not found');
+
       return await this.prisma[this.entity].update({ where: { id }, data });
     } catch (error: any) {
       this.logger.error(error.message);
@@ -81,6 +84,7 @@ export class BaseService<T> {
   async delete(id: number): Promise<T> {
     try {
       if (!id) throw new Error('Id not found');
+
       return await this.prisma[this.entity].delete({ where: { id } });
     } catch (error: any) {
       this.logger.error(error.message);

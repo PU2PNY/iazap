@@ -1,92 +1,232 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional, IsBoolean } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Matches,
+  MinLength,
+  isString,
+} from 'class-validator';
 
 export class CreateWhatsappOficialDto {
-  @ApiProperty({ description: 'ID do número de telefone no Meta Business' })
+  /**
+   * chatwoot url
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'chatwoot webhook url',
+    default: 'http://url.com.br',
+    example: 'http://url.com.br',
+  })
+  @IsOptional()
   @IsString()
-  phone_number_id: string;
+  chatwoot_webhook_url?: string;
 
-  @ApiProperty({ description: 'ID da conta WhatsApp Business (WABA)' })
+  /**
+   * chatwoot token
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'chatwoot webhook token',
+    default: 'TOKENCHATWOOT',
+    example: 'TOKENCHATWOOT',
+  })
+  @IsOptional()
   @IsString()
-  waba_id: string;
+  auth_token_chatwoot?: string;
 
-  @ApiProperty({ description: 'Token de acesso permanente do Meta' })
+  /**
+   * n8n url
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'n8n webhook url',
+    default: 'http://url.com.br',
+    example: 'http://url.com.br',
+  })
+  @IsOptional()
   @IsString()
-  send_token: string;
+  n8n_webhook_url?: string;
 
-  @ApiProperty({ description: 'ID do Business no Meta' })
+  /**
+   * chatwoot token
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'n8n webhook token',
+    default: 'TOKENN8N',
+    example: 'TOKENN8N',
+  })
+  @IsOptional()
   @IsString()
-  business_id: string;
+  auth_token_n8n?: string;
 
-  @ApiProperty({ description: 'Número de telefone formatado' })
+  /**
+   * chatwoot url
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'crm webhook url',
+    default: 'http://url.com.br',
+    example: 'http://url.com.br',
+  })
+  @IsOptional()
   @IsString()
-  phone_number: string;
+  crm_webhook_url?: string;
 
-  @ApiProperty({ description: 'Token para integração com Mult100' })
+  /**
+   * crm webhook token
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'crm webhook token',
+    default: 'TOKENCRM',
+    example: 'TOKENCRM',
+  })
+  @IsOptional()
+  @IsString()
+  auth_token_crm?: string;
+
+  /**
+   * chatwoot url
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'typebot webhook url',
+    default: 'http://url.com.br',
+    example: 'http://url.com.br',
+  })
+  @IsOptional()
+  @IsString()
+  typebot_webhook_url?: string;
+
+  /**
+   * crm webhook token
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'typebot webhook token',
+    default: 'TOKENTYPEBOT',
+    example: 'TOKENTYPEBOT',
+  })
+  @IsOptional()
+  @IsString()
+  auth_token_typebot?: string;
+
+  /**
+   * crm webhook token
+   * @type {boolean}
+   */
+  @ApiProperty({
+    description: 'caso utilize o rabbitmq coloque true',
+    default: false,
+    example: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  use_rabbitmq?: boolean;
+
+  /**
+   * token whatsapp do mult100
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'token do whatsapp do Mult 100',
+    default: 1,
+    example: 1,
+  })
+  @IsNotEmpty()
   @IsString()
   token_mult100: string;
 
-  @ApiProperty({ description: 'ID da empresa no Mult100' })
+  /**
+   * id da empresa do mult100
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'id da empresa do Multi100',
+    default: 1,
+    example: 1,
+  })
+  @IsNotEmpty()
   @IsNumber()
   idEmpresaMult100: number;
 
-  @ApiPropertyOptional({ description: 'Usar RabbitMQ' })
-  @IsBoolean()
-  @IsOptional()
-  use_rabbitmq?: boolean;
-
-  @ApiPropertyOptional({ description: 'Exchange do RabbitMQ' })
+  /**
+   * id do telefone do business meta
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'id do telefone do business meta',
+    default: 'PHONENUMBERID',
+    example: 'PHONENUMBERID',
+  })
+  @IsNotEmpty()
   @IsString()
-  @IsOptional()
-  rabbitmq_exchange?: string;
+  phone_number_id: string;
 
-  @ApiPropertyOptional({ description: 'Nome da fila RabbitMQ' })
+  /**
+   * identificação da meta business
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'identificação da meta business',
+  })
+  @IsNotEmpty()
   @IsString()
-  @IsOptional()
-  rabbitmq_queue?: string;
+  waba_id: string;
 
-  @ApiPropertyOptional({ description: 'Routing key do RabbitMQ' })
+  /**
+   * token de envio api
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'token de envio api',
+    default: 'TOKENENVIOAPI',
+    example: 'TOKENENVIOAPI',
+  })
+  @IsNotEmpty()
   @IsString()
+  send_token: string;
+
+  /**
+   * id da empresa
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'id da empresa',
+    default: 'BUSINESSID',
+    example: 'BUSINESSID',
+  })
+  @IsNotEmpty()
+  @IsString()
+  business_id: string;
+
+  /**
+   * numero telefone
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'numero telefone',
+    default: '+55000111111111',
+    example: '+55000111111111',
+  })
+  @MinLength(8)
+  @IsString()
+  phone_number: string;
+
+  /**
+   * routing key do RabbitMQ
+   * @type {string}
+   */
+  @ApiProperty({
+    description: 'routing key do RabbitMQ',
+    default: 'routing_key',
+    example: 'routing_key',
+  })
   @IsOptional()
+  @IsString()
   rabbitmq_routing_key?: string;
-
-  @ApiPropertyOptional({ description: 'URL do webhook Chatwoot' })
-  @IsString()
-  @IsOptional()
-  chatwoot_webhook_url?: string;
-
-  @ApiPropertyOptional({ description: 'Token auth Chatwoot' })
-  @IsString()
-  @IsOptional()
-  auth_token_chatwoot?: string;
-
-  @ApiPropertyOptional({ description: 'URL do webhook N8N' })
-  @IsString()
-  @IsOptional()
-  n8n_webhook_url?: string;
-
-  @ApiPropertyOptional({ description: 'Token auth N8N' })
-  @IsString()
-  @IsOptional()
-  auth_token_n8n?: string;
-
-  @ApiPropertyOptional({ description: 'URL do webhook CRM' })
-  @IsString()
-  @IsOptional()
-  crm_webhook_url?: string;
-
-  @ApiPropertyOptional({ description: 'Token auth CRM' })
-  @IsString()
-  @IsOptional()
-  auth_token_crm?: string;
-
-  @ApiPropertyOptional({ description: 'URL do webhook Typebot' })
-  @IsString()
-  @IsOptional()
-  typebot_webhook_url?: string;
-
-  @ApiPropertyOptional({ description: 'Token auth Typebot' })
-  @IsString()
-  @IsOptional()
-  auth_token_typebot?: string;
 }

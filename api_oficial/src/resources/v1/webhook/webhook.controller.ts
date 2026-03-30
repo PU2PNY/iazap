@@ -3,8 +3,11 @@ import {
   Get,
   Post,
   Body,
+  Patch,
   Param,
+  Delete,
   Query,
+  Request,
 } from '@nestjs/common';
 import { WebhookService } from './webhook.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -19,21 +22,37 @@ export class WebhookController {
   @Public()
   @Post(':companyId/:conexaoId')
   @ApiOperation({ summary: 'Webhook para evento de empresa e conexão' })
-  @ApiResponse({ status: 400, description: 'Retorna o erro' })
-  @ApiResponse({ status: 200, description: 'Retorna true caso sucesso' })
+  @ApiResponse({
+    status: 400,
+    description: 'Retorna o erro para quem esta chamando',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna somente um true caso tenha sucesso',
+  })
   async webhookCompanyConexao(
     @Param('companyId') companyId: number,
     @Param('conexaoId') conexaoId: number,
     @Body() data: IWebhookWhatsApp,
   ) {
-    return await this.webhookService.webhookCompanyConexao(companyId, conexaoId, data);
+    return await this.webhookService.webhookCompanyConexao(
+      companyId,
+      conexaoId,
+      data,
+    );
   }
 
   @Public()
   @Get(':companyId/:conexaoId')
-  @ApiOperation({ summary: 'Webhook para validação' })
-  @ApiResponse({ status: 400, description: 'Retorna o erro' })
-  @ApiResponse({ status: 200, description: 'Retorna challenge' })
+  @ApiOperation({ summary: 'Webhook para evento de empresa' })
+  @ApiResponse({
+    status: 400,
+    description: 'Retorna o erro para quem esta chamando',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna somente um true caso tenha sucesso',
+  })
   async webhookCompany(
     @Param('companyId') companyId: number,
     @Param('conexaoId') conexaoId: number,
@@ -41,6 +60,12 @@ export class WebhookController {
     @Query('hub.verify_token') verify_token: string,
     @Query('hub.challenge') challenge: string,
   ) {
-    return await this.webhookService.webhookCompany(companyId, conexaoId, mode, verify_token, challenge);
+    return await this.webhookService.webhookCompany(
+      companyId,
+      conexaoId,
+      mode,
+      verify_token,
+      challenge,
+    );
   }
 }

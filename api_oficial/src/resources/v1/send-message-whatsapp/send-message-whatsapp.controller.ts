@@ -3,68 +3,59 @@ import {
   Post,
   Body,
   Param,
-  Get,
   UseInterceptors,
   UploadedFile,
-  Query,
+  Request,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { SendMessageWhatsappService } from './send-message-whatsapp.service';
-import { SendMessageDto } from './dto/send-message.dto';
+import { CreateSendMessageWhatsappDto } from './dto/create-send-message-whatsapp.dto';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { IRequest } from 'src/@core/global-interfaces/iRequest.interface';
 import { Public } from '../../../@core/guard/auth.decorator';
 
 @Controller('v1/send-message-whatsapp')
-@ApiTags('Send Message WhatsApp')
 export class SendMessageWhatsappController {
-  constructor(private readonly sendMessageService: SendMessageWhatsappService) {}
+  constructor(private readonly service: SendMessageWhatsappService) {}
 
-  @Public()
   @Post(':token')
-  @ApiOperation({ summary: 'Enviar mensagem via WhatsApp Oficial' })
-  @ApiResponse({ status: 200, description: 'Mensagem enviada com sucesso' })
-  @ApiResponse({ status: 400, description: 'Erro ao enviar mensagem' })
-  @ApiResponse({ status: 404, description: 'Conexão não encontrada' })
-  async sendMessage(
-    @Param('token') token: string,
-    @Body() sendMessageDto: SendMessageDto,
-  ) {
-    return this.sendMessageService.sendMessage(token, sendMessageDto);
-  }
-
   @Public()
-  @Post(':token/upload')
-  @UseInterceptors(FileInterceptor('file'))
-  @ApiOperation({ summary: 'Upload de mídia para envio posterior' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
+  @ApiOperation({ summary: 'Enviar Mensagem com o Whatsapp Oficial' })
+  @ApiResponse({
+    status: 400,
+    description: 'Erro ao salvar a mensagem para enviar',
   })
-  @ApiResponse({ status: 200, description: 'Upload realizado com sucesso' })
-  @ApiResponse({ status: 400, description: 'Erro no upload' })
-  async uploadMedia(
+  @ApiResponse({
+    status: 200,
+    description:
+      'Retorna o registro salvo no banco para enviar a mensagem do whats',
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  sendMessage(
     @Param('token') token: string,
+    @Body('data') data: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.sendMessageService.uploadMedia(token, file);
+    return this.service.createMessage(token, data, file);
   }
 
+  @Post('read-message/:token/:messageId')
   @Public()
-  @Get(':token/status/:messageId')
-  @ApiOperation({ summary: 'Consultar status de uma mensagem' })
-  @ApiResponse({ status: 200, description: 'Status da mensagem' })
-  async getMessageStatus(
+  @ApiOperation({ summary: 'Enviar Mensagem com o Whatsapp Oficial' })
+  @ApiResponse({
+    status: 400,
+    description: 'Erro ao salvar a mensagem para enviar',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Retorna o registro salvo no banco para enviar a mensagem do whats',
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  readMessage(
     @Param('token') token: string,
     @Param('messageId') messageId: string,
   ) {
-    return this.sendMessageService.getMessageStatus(token, messageId);
+    return this.service.readMessage(token, messageId);
   }
 }

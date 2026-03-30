@@ -32,6 +32,4 @@ export interface IMessageReceived {
   mimeType?: string;
   idFile?: string;
   quoteMessageId?: string;
-  fileUrl?: string;
-  fileSize?: number;
 }

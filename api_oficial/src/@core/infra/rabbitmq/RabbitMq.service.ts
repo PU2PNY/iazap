@@ -1,10 +1,10 @@
 import { Logger } from '@nestjs/common';
-import * as amqplib from 'amqplib';
+import { Channel, Connection, Message, connect } from 'amqplib';
 import { WhatsAppOficial } from 'src/@core/domain/entities/whatsappOficial.model';
 
 export class RabbitMQService {
-  private connection: any = null;
-  private channel: any = null;
+  private connection: Connection;
+  private channel: Channel;
   private url: string;
   private logger: Logger = new Logger(`${RabbitMQService.name}`);
   private isEnabled: boolean;
@@ -22,8 +22,10 @@ export class RabbitMQService {
   async connect(): Promise<void> {
     try {
       if (!this.isEnabled) return;
+
       this.url = process.env.RABBITMQ_URL;
-      this.connection = await amqplib.connect(this.url);
+
+      this.connection = await connect(this.url);
       this.channel = await this.connection.createChannel();
       this.logger.log('📡 Conexão com RabbitMQ estabelecida com sucesso');
     } catch (error) {
@@ -33,7 +35,7 @@ export class RabbitMQService {
   }
 
   async publish(queue: string, message: string): Promise<void> {
-    if (!this.isEnabled || !this.channel) return;
+    if (!this.isEnabled) return;
     await this.channel.assertQueue(queue, { durable: true });
     this.channel.sendToQueue(queue, Buffer.from(message), { persistent: true });
   }
@@ -42,20 +44,22 @@ export class RabbitMQService {
     queue: string,
     callback: (message: string) => void,
   ): Promise<void> {
-    if (!this.isEnabled || !this.channel) return;
+    if (!this.isEnabled) return;
     await this.channel.assertQueue(queue, { durable: true });
-    await this.channel.consume(queue, (msg: any) => {
+    await this.channel.consume(queue, (msg: Message | null) => {
       if (msg !== null) {
         callback(msg.content.toString());
-        this.channel?.ack(msg);
+        this.channel.ack(msg);
       }
     });
   }
 
   async sendToRabbitMQ(whats: WhatsAppOficial, body: any) {
     try {
-      if (!this.isEnabled || !this.channel) return;
+      if (!this.isEnabled) return;
+
       if (!whats) throw new Error('Nenhum valor informado');
+
       if (!whats.use_rabbitmq) throw new Error('Configuração não ativa');
 
       const exchange = whats.rabbitmq_exchange;
@@ -105,7 +109,7 @@ export class RabbitMQService {
 
   async close(): Promise<void> {
     if (!this.isEnabled) return;
-    if (this.channel) await this.channel.close();
-    if (this.connection) await this.connection.close();
+    await this.channel.close();
+    await this.connection.close();
   }
 }

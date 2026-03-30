@@ -29,7 +29,8 @@ export async function savedFile(
   const writeFileAsync = promisify(writeFile);
 
   try {
-    await writeFileAsync(filePath, buffer);
+    await writeFileAsync(filePath, buffer); // Escreve o buffer no arquivo
+
     return filePath;
   } catch (err: any) {
     throw new Error(`Erro ao salvar o arquivo: ${err.message}`);
@@ -38,6 +39,7 @@ export async function savedFile(
 
 export function deleteFile(path: string) {
   if (!path) throw new Error('Necessário informar o caminho do arquivo');
+
   if (!existsSync(path)) throw new Error('Não existe um arquivo com este nome');
 
   try {
@@ -50,6 +52,7 @@ export function deleteFile(path: string) {
 
 export function getBase64(path: string) {
   const file = readFileSync(path);
+
   return file.toString(`base64`);
 }
 

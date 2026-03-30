@@ -13,6 +13,15 @@ export function validarFields(fields: Array<string>, obj: any) {
   }, []);
 }
 
+/**
+ * ordena os valores de um array de objetos pela propriedade
+ *
+ * @example array.sort(dynamicSort("propriedade")) // ordenação asc
+ * @example array.sort(dynamicSort("-propriedade")) // ordenação desc
+ *
+ * @param {Array} property
+ * @returns {Array}
+ */
 export function dynamicSort(property: string) {
   let sortOrder = 1;
   if (property[0] === '-') {
